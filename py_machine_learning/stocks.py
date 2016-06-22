@@ -1,4 +1,4 @@
-import pandas as pd
+﻿import pandas as pd
 import os
 import time
 from datetime import datetime
@@ -9,15 +9,52 @@ style.use('dark_background')
 
 path = 'intraQuarter';
 
-def Key_stats():
+
+gather=["Total Debt/Equity",
+                      'Trailing P/E',
+                      'Price/Sales',
+                      'Price/Book',
+                      'Profit Margin',
+                      'Operating Margin',
+                      'Return on Assets',
+                      'Return on Equity',
+                      'Revenue Per Share',
+                      'Market Cap',
+                        'Enterprise Value',
+                        'Forward P/E',
+                        'PEG Ratio',
+                        'Enterprise Value/Revenue',
+                        'Enterprise Value/EBITDA',
+                        'Revenue',
+                        'Gross Profit',
+                        'EBITDA',
+                        'Net Income Avl to Common ',
+                        'Diluted EPS',
+                        'Earnings Growth',
+                        'Revenue Growth',
+                        'Total Cash',
+                        'Total Cash Per Share',
+                        'Total Debt',
+                        'Current Ratio',
+                        'Book Value Per Share',
+                        'Cash Flow',
+                        'Beta',
+                        'Held by Insiders',
+                        'Held by Institutions',
+                        'Shares Short (as of',
+                        'Short Ratio',
+                        'Short % of Float',
+                        'Shares Short (prior '];
+
+def Key_stats(gather):
     key_stats_path = path + '/_KeyStats';
     dir = [x[0] for x in os.walk(key_stats_path)];
     
-    df = pd.DataFrame(columns = ['Date','Unix','Ticker','DE Ratio', 'Price','Price_Pctchng','SP500', 'SP500_Pctchng','Difference', 'Status']);
+    df = pd.DataFrame(columns = ['Date','Unix','Ticker', 'Price','Price_Pctchng','SP500', 'SP500_Pctchng','Difference', 'Status']);
 
     sp500_df = pd.read_csv('YAHOO-INDEX_GSPC.csv', index_col='Date')
     ticker_list = []
-    for each_dir in dir[1:25]:
+    for each_dir in dir[1:2]:
         files = os.listdir(each_dir);
         ticker = each_dir.split('\\')[1]
 
@@ -32,14 +69,35 @@ def Key_stats():
     
             try:
                 source = ''
+                print each_dir + '/' + file
                 with open(each_dir + '/' + file, 'r') as f:
                     source = f.read();
                     source = source.replace('\n', '').replace('\r', '')
 
+                feature_map = dict()
                 try:
-                    value = float(source.split('Total Debt/Equity (mrq):</td><td class="yfnc_tabledata1">')[1].split('</td>')[0]);
+                    #value = float(source.split('Total Debt/Equity (mrq):</td><td class="yfnc_tabledata1">')[1].split('</td>')[0]);
+                    dfs = pd.read_html(each_dir + '/' + file);
+                    df_stats = pd.DataFrame();
+                    for d in dfs:
+                        try:
+                            if(str(d[0][0]).startswith('Key')):
+                                df_stats  = d[[0,1]]
+                                for index, row in df_stats.iterrows():
+                                    try:
+                                        key = str(row[0])
+                                        if key.endswith(':'):
+                                            for feature in gather:    
+                                                if key.startswith(feature):
+                                                    val = str(row[1])
+                                                    feature_map[feature] = val
+                                                    break;
+                                    except :
+                                        pass
+                                break;
+                        except:
+                                pass;
                 except Exception as e:
-                    #print 'Total Debt/Equity : ' + str(e) + ' in ' + ticker + ' '+  file ;
                     pass
 
                 try:
@@ -73,22 +131,22 @@ def Key_stats():
                 SP500_pctchng = ((sp500_value - old_SP500_value)/old_SP500_value) * 100
                 diff = price_pctchng - SP500_pctchng;
 
-                if diff >= 0:
+                if diff > 0:
                     status =1
                 else:
                     status =-1
 
-                df = df.append({'Date': date_stamp,
+                feature_map.update({'Date': date_stamp,
                                 'Unix':unix_time,
                                 'Ticker':ticker,
-                                'DE Ratio':value,
                                 'Price' : stock_price,
                                 'SP500' : sp500_value,
                                 'Price_Pctchng' : price_pctchng,
                                 'SP500_Pctchng':SP500_pctchng,
                                 'Difference' : price_pctchng - SP500_pctchng,
                                 'Status' : status
-                                }, ignore_index=True);
+                                });
+                df = df.append(feature_map, ignore_index=True);
             except Exception as e:
                 #print str(e) + ' in ' + ticker + ' '+  file ;
                 pass
@@ -110,6 +168,6 @@ def Key_stats():
     df.to_csv('out.csv');
     plt.show();
 
-Key_stats();
+Key_stats(gather);
 print 'Done'
 
