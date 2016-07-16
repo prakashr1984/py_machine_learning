@@ -26,6 +26,9 @@
     <Compile Include="airpass.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="conv_nn.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="plotting.py" />
     <Compile Include="ocr.py">
       <SubType>Code</SubType>
