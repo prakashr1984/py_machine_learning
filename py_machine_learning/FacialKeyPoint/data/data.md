@@ -1,6 +1,5 @@
 
 # Data
-____
 Head over to [Kaggle Facial Key Point Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) project and under data section download the files below.
 
 
