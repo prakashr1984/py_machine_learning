@@ -23,12 +23,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="airpass.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="conv_nn.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FacialKeyPoint\facial_keypoint_detection.py" />
     <Compile Include="plotting.py" />
     <Compile Include="ocr.py">
       <SubType>Code</SubType>
@@ -43,6 +41,13 @@
     <Compile Include="xor_theano.py">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FacialKeyPoint\" />
+    <Folder Include="FacialKeyPoint\data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FacialKeyPoint\data\data.md" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
